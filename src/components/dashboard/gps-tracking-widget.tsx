@@ -12,6 +12,7 @@ export function GPSTrackingWidget() {
     currentLocation,
     error,
     permissionStatus,
+    isOnline,
     startTracking,
     stopTracking
   } = useGPSTracking()
@@ -35,6 +36,15 @@ export function GPSTrackingWidget() {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!isOnline && (
+          <div className="flex items-center gap-2 rounded-lg bg-orange-500/10 border border-orange-500/20 p-3">
+            <AlertCircle className="h-4 w-4 text-orange-500" />
+            <p className="text-sm text-orange-500">
+              İnternet bağlantısı yok. Uçak modunu kapatın.
+            </p>
+          </div>
+        )}
+
         {error && (
           <div className="flex items-center gap-2 rounded-lg bg-red-500/10 border border-red-500/20 p-3">
             <AlertCircle className="h-4 w-4 text-red-500" />
@@ -76,7 +86,7 @@ export function GPSTrackingWidget() {
             <Button 
               onClick={startTracking} 
               className="flex-1"
-              disabled={permissionStatus === 'denied'}
+              disabled={permissionStatus === 'denied' || !isOnline}
             >
               <Navigation className="mr-2 h-4 w-4" />
               Takibi Başlat
@@ -95,6 +105,12 @@ export function GPSTrackingWidget() {
         {permissionStatus === 'denied' && (
           <p className="text-xs text-slate-400 text-center">
             Konum izni reddedildi. Tarayıcı ayarlarından izin verin.
+          </p>
+        )}
+
+        {!isOnline && (
+          <p className="text-xs text-orange-400 text-center">
+            GPS takibi için internet bağlantısı gerekli.
           </p>
         )}
 

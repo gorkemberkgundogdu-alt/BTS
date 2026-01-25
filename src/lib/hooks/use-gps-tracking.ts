@@ -12,8 +12,37 @@ export function useGPSTracking() {
   const [currentLocation, setCurrentLocation] = useState<LocationData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [permissionStatus, setPermissionStatus] = useState<'granted' | 'denied' | 'prompt'>('prompt')
+  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true)
 
   const trackingService = getGPSTrackingService()
+
+  /**
+   * Online/offline durumunu dinle
+   */
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true)
+      setError(null)
+    }
+    
+    const handleOffline = () => {
+      setIsOnline(false)
+      setError('İnternet bağlantısı yok. Uçak modunu kapatın.')
+      if (isTracking) {
+        trackingService.stopTracking()
+        setIsTracking(false)
+        setCurrentLocation(null)
+      }
+    }
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [isTracking, trackingService])
 
   /**
    * Konum verisini Supabase'e gönder
@@ -46,17 +75,49 @@ export function useGPSTracking() {
    * Tracking başlat
    */
   const startTracking = useCallback(async () => {
+    // Önce internet kontrolü
+    if (!isOnline) {
+      setError('İnternet bağlantısı yok. Uçak modunu kapatın veya WiFi açın.')
+      return
+    }
+
     try {
       setError(null)
       
+      // İlk önce konum iznini kontrol et
+      const hasPermission = await checkPermission()
+      if (!hasPermission) {
+        setError('Konum izni gerekli. Lütfen tarayıcı ayarlarından izin verin.')
+        setPermissionStatus('denied')
+        return
+      }
+
       await trackingService.startTracking(
         (location) => {
           setCurrentLocation(location)
+          setError(null) // Clear any previous errors
           // Her konum güncellemesinde server'a gönder
           sendLocationToServer(location)
         },
         (err) => {
-          setError(err.message)
+          let errorMessage = 'GPS hatası'
+          
+          switch (err.code) {
+            case err.PERMISSION_DENIED:
+              errorMessage = 'Konum izni reddedildi. Tarayıcı ayarlarından izin verin.'
+              setPermissionStatus('denied')
+              break
+            case err.POSITION_UNAVAILABLE:
+              errorMessage = 'Konum bilgisi alınamıyor. GPS açık mı kontrol edin.'
+              break
+            case err.TIMEOUT:
+              errorMessage = 'Konum tespiti zaman aşımına uğradı. Tekrar deneyin.'
+              break
+            default:
+              errorMessage = err.message || 'Bilinmeyen GPS hatası'
+          }
+          
+          setError(errorMessage)
           setIsTracking(false)
         }
       )
@@ -64,11 +125,28 @@ export function useGPSTracking() {
       setIsTracking(true)
       setPermissionStatus('granted')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'GPS başlatılamadı')
+      const errorMessage = err instanceof Error ? err.message : 'GPS başlatılamadı'
+      setError(errorMessage)
       setPermissionStatus('denied')
       setIsTracking(false)
     }
-  }, [trackingService, sendLocationToServer])
+  }, [trackingService, sendLocationToServer, isOnline])
+
+  /**
+   * Konum iznini kontrol et
+   */
+  const checkPermission = async (): Promise<boolean> => {
+    try {
+      if ('permissions' in navigator) {
+        const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName })
+        setPermissionStatus(result.state === 'granted' ? 'granted' : result.state === 'denied' ? 'denied' : 'prompt')
+        return result.state !== 'denied'
+      }
+      return true
+    } catch {
+      return true // Safari doesn't support permissions API fully
+    }
+  }
 
   /**
    * Tracking durdur
@@ -111,8 +189,10 @@ export function useGPSTracking() {
     currentLocation,
     error,
     permissionStatus,
+    isOnline,
     startTracking,
     stopTracking,
-    getCurrentPosition
+    getCurrentPosition,
+    checkPermission
   }
 }

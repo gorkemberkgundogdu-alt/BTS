@@ -127,40 +127,72 @@ export function TrackingMap() {
 
     const markers = markersRef.current
 
-    // Eski marker'ları temizle
-    markers.forEach((marker) => marker.remove())
-    markers.clear()
-
-    // Yeni marker'lar ekle
+    // Sadece değişen marker'ları güncelle
     personnel.forEach((person) => {
-      if (!person.last_location) return
+      if (!person.last_location) {
+        // Konum yoksa marker'ı kaldır
+        const existingMarker = markers.get(person.id)
+        if (existingMarker) {
+          existingMarker.remove()
+          markers.delete(person.id)
+        }
+        return
+      }
 
-      const el = document.createElement('div')
-      el.className = 'relative'
-      el.innerHTML = `
-        <div class="relative">
-          <div class="absolute -inset-1 bg-blue-500 rounded-full animate-ping opacity-75"></div>
-          <div class="relative w-10 h-10 bg-blue-600 rounded-full border-3 border-white shadow-lg flex items-center justify-center">
-            <span class="text-white text-sm font-bold">${person.full_name.charAt(0)}</span>
+      const existingMarker = markers.get(person.id)
+      
+      if (existingMarker) {
+        // Mevcut marker'ı güncelle (yeniden oluşturma)
+        existingMarker.setLngLat([person.last_location.longitude, person.last_location.latitude])
+        
+        // Popup'ı güncelle
+        const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
+          <div class="text-sm">
+            <p class="font-bold">${person.full_name}</p>
+            <p class="text-xs text-slate-400">
+              Son güncelleme: ${new Date(person.last_location.recorded_at).toLocaleTimeString('tr-TR')}
+            </p>
           </div>
-        </div>
-      `
+        `)
+        existingMarker.setPopup(popup)
+      } else {
+        // Yeni marker ekle
+        const el = document.createElement('div')
+        el.className = 'relative'
+        el.innerHTML = `
+          <div class="relative">
+            <div class="absolute -inset-1 bg-blue-500 rounded-full animate-ping opacity-75"></div>
+            <div class="relative w-10 h-10 bg-blue-600 rounded-full border-3 border-white shadow-lg flex items-center justify-center">
+              <span class="text-white text-sm font-bold">${person.full_name.charAt(0)}</span>
+            </div>
+          </div>
+        `
 
-      const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
-        <div class="text-sm">
-          <p class="font-bold">${person.full_name}</p>
-          <p class="text-xs text-slate-400">
-            Son güncelleme: ${new Date(person.last_location.recorded_at).toLocaleTimeString('tr-TR')}
-          </p>
-        </div>
-      `)
+        const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
+          <div class="text-sm">
+            <p class="font-bold">${person.full_name}</p>
+            <p class="text-xs text-slate-400">
+              Son güncelleme: ${new Date(person.last_location.recorded_at).toLocaleTimeString('tr-TR')}
+            </p>
+          </div>
+        `)
 
-      const marker = new maplibregl.Marker({ element: el })
-        .setLngLat([person.last_location.longitude, person.last_location.latitude])
-        .setPopup(popup)
-        .addTo(map)
+        const marker = new maplibregl.Marker({ element: el })
+          .setLngLat([person.last_location.longitude, person.last_location.latitude])
+          .setPopup(popup)
+          .addTo(map)
 
-      markers.set(person.id, marker)
+        markers.set(person.id, marker)
+      }
+    })
+
+    // Silinen personellerin marker'larını kaldır
+    const activePersonnelIds = new Set(personnel.map(p => p.id))
+    markers.forEach((marker, id) => {
+      if (!activePersonnelIds.has(id)) {
+        marker.remove()
+        markers.delete(id)
+      }
     })
   }, [map, personnel])
 
