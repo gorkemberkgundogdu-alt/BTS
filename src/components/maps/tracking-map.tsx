@@ -39,25 +39,30 @@ export function TrackingMap() {
     if (!user) return
 
     const loadData = async () => {
+      console.log('🗺️ Harita verisi yükleniyor...')
+      
       // Personel listesi
-      const { data: personnelData } = await supabase
+      const { data: personnelData, error: personnelError } = await supabase
         .from('profiles')
         .select('id, full_name, avatar_url')
         .eq('role', 'personnel')
         .eq('status', 'active')
-        .returns<Array<{ id: string; full_name: string; avatar_url?: string }>>()
+
+      console.log('👥 Personel data:', personnelData, 'Error:', personnelError)
 
       // Her personel için son GPS konumu
       if (personnelData) {
         const personnelWithLocations = await Promise.all(
           personnelData.map(async (p) => {
-            const { data: lastLocation } = await supabase
+            const { data: lastLocation, error: gpsError } = await supabase
               .from('gps_locations')
               .select('latitude, longitude, recorded_at')
               .eq('user_id', p.id)
               .order('recorded_at', { ascending: false })
               .limit(1)
               .maybeSingle()
+
+            console.log(`📍 ${p.full_name} konum:`, lastLocation, 'Error:', gpsError)
 
             return {
               ...p,
@@ -66,6 +71,7 @@ export function TrackingMap() {
           })
         )
 
+        console.log('✅ Personel with locations:', personnelWithLocations)
         setPersonnel(personnelWithLocations)
       }
 
@@ -75,6 +81,7 @@ export function TrackingMap() {
         .select('id, name, code, geojson')
         .eq('active', true)
 
+      console.log('🛣️ Routes data:', routesData)
       if (routesData) {
         setRoutes(routesData)
       }
@@ -93,6 +100,7 @@ export function TrackingMap() {
           table: 'gps_locations'
         },
         (payload) => {
+          console.log('📍 Real-time GPS update:', payload.new)
           const newLocation = payload.new as any
           
           // Personel konumunu güncelle
@@ -114,6 +122,8 @@ export function TrackingMap() {
       )
       .subscribe()
 
+    console.log('📡 Real-time subscription başlatıldı')
+
     return () => {
       supabase.removeChannel(gpsChannel)
     }
@@ -125,11 +135,13 @@ export function TrackingMap() {
   useEffect(() => {
     if (!map) return
 
+    console.log('🗺️ Marker güncelleniyor, Personnel count:', personnel.length)
     const markers = markersRef.current
 
     // Sadece değişen marker'ları güncelle
     personnel.forEach((person) => {
       if (!person.last_location) {
+        console.log(`❌ ${person.full_name} - Konum yok`)
         // Konum yoksa marker'ı kaldır
         const existingMarker = markers.get(person.id)
         if (existingMarker) {
@@ -139,22 +151,24 @@ export function TrackingMap() {
         return
       }
 
+      console.log(`✅ ${person.full_name} - Konum var:`, person.last_location)
       const existingMarker = markers.get(person.id)
       
       if (existingMarker) {
-        // Mevcut marker'ı güncelle (yeniden oluşturma)
+        // Mevcut marker'ı güncelle
         existingMarker.setLngLat([person.last_location.longitude, person.last_location.latitude])
         
         // Popup'ı güncelle
         const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
-          <div class="text-sm">
-            <p class="font-bold">${person.full_name}</p>
-            <p class="text-xs text-slate-400">
+          <div class="text-sm p-2">
+            <p class="font-bold text-gray-900">${person.full_name}</p>
+            <p class="text-xs text-gray-600">
               Son güncelleme: ${new Date(person.last_location.recorded_at).toLocaleTimeString('tr-TR')}
             </p>
           </div>
         `)
         existingMarker.setPopup(popup)
+        console.log(`🔄 ${person.full_name} marker güncellendi`)
       } else {
         // Yeni marker ekle
         const el = document.createElement('div')
@@ -169,9 +183,9 @@ export function TrackingMap() {
         `
 
         const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
-          <div class="text-sm">
-            <p class="font-bold">${person.full_name}</p>
-            <p class="text-xs text-slate-400">
+          <div class="text-sm p-2">
+            <p class="font-bold text-gray-900">${person.full_name}</p>
+            <p class="text-xs text-gray-600">
               Son güncelleme: ${new Date(person.last_location.recorded_at).toLocaleTimeString('tr-TR')}
             </p>
           </div>
@@ -183,6 +197,7 @@ export function TrackingMap() {
           .addTo(map)
 
         markers.set(person.id, marker)
+        console.log(`➕ ${person.full_name} marker eklendi`)
       }
     })
 
@@ -192,6 +207,7 @@ export function TrackingMap() {
       if (!activePersonnelIds.has(id)) {
         marker.remove()
         markers.delete(id)
+        console.log(`🗑️ Marker silindi: ${id}`)
       }
     })
   }, [map, personnel])

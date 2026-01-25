@@ -82,31 +82,40 @@ export function TaskList() {
 
   // Görevi başlat (GPS tracking ile birlikte)
   const handleStartTask = async (taskId: string) => {
+    console.log('🚀 Görev başlatma başladı, Task ID:', taskId)
     setStartingTask(taskId)
 
     try {
+      console.log('📍 GPS tracking başlatılıyor...')
       // 1. GPS tracking'i başlat
       const trackingStarted = await startTracking()
+      console.log('📍 GPS tracking sonucu:', trackingStarted)
       
       // Eğer tracking başlatılamadıysa hata göster
       if (!trackingStarted) {
         throw new Error('GPS izni alınamadı')
       }
 
+      console.log('💾 Görev durumu güncelleniyor...')
       // 2. Görevi başlat
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('tasks')
         .update({ 
           status: 'in_progress',
           started_at: new Date().toISOString() 
         })
         .eq('id', taskId)
+        .select()
+        .single()
+      
+      console.log('💾 Görev güncelleme sonucu:', { data, error })
       
       if (error) throw error
 
+      console.log('✅ Görev başarıyla başlatıldı!')
       alert('Görev başlatıldı! GPS takibi aktif.')
     } catch (err) {
-      console.error('Görev başlatma hatası:', err)
+      console.error('❌ Görev başlatma hatası:', err)
       alert('Görev başlatılamadı. GPS izni verildiğinden emin olun ve tekrar deneyin.')
     } finally {
       setStartingTask(null)

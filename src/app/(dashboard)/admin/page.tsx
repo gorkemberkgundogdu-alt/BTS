@@ -109,7 +109,8 @@ export default function AdminDashboardPage() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'tasks' },
-        () => {
+        (payload) => {
+          console.log('📊 Dashboard task update:', payload)
           loadDashboardData()
         }
       )

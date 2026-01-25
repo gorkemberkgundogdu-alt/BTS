@@ -75,31 +75,42 @@ export function useGPSTracking() {
    * Tracking başlat
    */
   const startTracking = useCallback(async (): Promise<boolean> => {
+    console.log('🎯 startTracking çağrıldı')
+    console.log('📡 isOnline:', isOnline)
+    
     // Önce internet kontrolü
     if (!isOnline) {
       setError('İnternet bağlantısı yok. Uçak modunu kapatın veya WiFi açın.')
+      console.log('❌ İnternet bağlantısı yok')
       return false
     }
 
     try {
       setError(null)
       
+      console.log('🔐 İzin kontrolü yapılıyor...')
       // İlk önce konum iznini kontrol et
       const hasPermission = await checkPermission()
+      console.log('🔐 İzin sonucu:', hasPermission, 'Status:', permissionStatus)
+      
       if (!hasPermission) {
         setError('Konum izni gerekli. Lütfen tarayıcı ayarlarından izin verin.')
         setPermissionStatus('denied')
+        console.log('❌ İzin reddedildi')
         return false
       }
 
+      console.log('📍 GPS tracking service başlatılıyor...')
       await trackingService.startTracking(
         (location) => {
+          console.log('📍 Konum güncellendi:', location)
           setCurrentLocation(location)
-          setError(null) // Clear any previous errors
+          setError(null)
           // Her konum güncellemesinde server'a gönder
           sendLocationToServer(location)
         },
         (err) => {
+          console.error('❌ GPS hatası:', err)
           let errorMessage = 'GPS hatası'
           
           switch (err.code) {
@@ -124,15 +135,17 @@ export function useGPSTracking() {
 
       setIsTracking(true)
       setPermissionStatus('granted')
+      console.log('✅ GPS tracking başlatıldı!')
       return true
     } catch (err) {
+      console.error('❌ Tracking başlatma exception:', err)
       const errorMessage = err instanceof Error ? err.message : 'GPS başlatılamadı'
       setError(errorMessage)
       setPermissionStatus('denied')
       setIsTracking(false)
       return false
     }
-  }, [trackingService, sendLocationToServer, isOnline, checkPermission])
+  }, [trackingService, sendLocationToServer, isOnline, checkPermission, permissionStatus])
 
   /**
    * Konum iznini kontrol et
