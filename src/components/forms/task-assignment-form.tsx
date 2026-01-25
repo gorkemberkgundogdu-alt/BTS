@@ -48,7 +48,16 @@ export function TaskAssignmentForm() {
   // Personel listesini yükle
   useEffect(() => {
     const loadPersonnel = async () => {
+      console.log('👥 Personel listesi yükleniyor...')
+      console.log('👤 Current user:', user)
+      
+      if (!user) {
+        console.log('❌ User yok, yükleme atlanıyor')
+        return
+      }
+
       try {
+        console.log('📡 Supabase query başlatılıyor...')
         const { data, error } = await supabase
           .from('profiles')
           .select('id, full_name, department')
@@ -56,24 +65,29 @@ export function TaskAssignmentForm() {
           .eq('status', 'active')
           .order('full_name')
 
+        console.log('📊 Query sonucu:', { data, error, count: data?.length })
+
         if (error) {
-          console.error('Personnel loading error:', error)
+          console.error('❌ Personnel loading error:', error)
           setError('Personel listesi yüklenemedi: ' + error.message)
           return
         }
 
-        console.log('Personnel loaded:', data)
-        if (data) {
-          setPersonnel(data)
+        if (!data || data.length === 0) {
+          console.warn('⚠️ Aktif personel bulunamadı!')
+          setPersonnel([])
+          return
         }
+
+        console.log('✅ Personnel loaded successfully:', data)
+        setPersonnel(data)
       } catch (err) {
-        console.error('Personnel loading exception:', err)
+        console.error('❌ Personnel loading exception:', err)
+        setError('Personel listesi yüklenirken bir hata oluştu')
       }
     }
 
-    if (user) {
-      loadPersonnel()
-    }
+    loadPersonnel()
   }, [supabase, user])
 
   const onSubmit = async (data: TaskFormData) => {

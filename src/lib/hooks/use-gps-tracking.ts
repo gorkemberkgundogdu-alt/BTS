@@ -91,11 +91,10 @@ export function useGPSTracking() {
       console.log('🔐 İzin kontrolü yapılıyor...')
       // İlk önce konum iznini kontrol et
       const hasPermission = await checkPermission()
-      console.log('🔐 İzin sonucu:', hasPermission, 'Status:', permissionStatus)
+      console.log('🔐 İzin sonucu:', hasPermission)
       
       if (!hasPermission) {
         setError('Konum izni gerekli. Lütfen tarayıcı ayarlarından izin verin.')
-        setPermissionStatus('denied')
         console.log('❌ İzin reddedildi')
         return false
       }
@@ -145,23 +144,24 @@ export function useGPSTracking() {
       setIsTracking(false)
       return false
     }
-  }, [trackingService, sendLocationToServer, isOnline, checkPermission, permissionStatus])
+  }, [trackingService, sendLocationToServer, isOnline, checkPermission])
 
   /**
    * Konum iznini kontrol et
    */
-  const checkPermission = async (): Promise<boolean> => {
+  const checkPermission = useCallback(async (): Promise<boolean> => {
     try {
       if ('permissions' in navigator) {
         const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName })
-        setPermissionStatus(result.state === 'granted' ? 'granted' : result.state === 'denied' ? 'denied' : 'prompt')
+        const newStatus = result.state === 'granted' ? 'granted' : result.state === 'denied' ? 'denied' : 'prompt'
+        setPermissionStatus(newStatus)
         return result.state !== 'denied'
       }
       return true
     } catch {
       return true // Safari doesn't support permissions API fully
     }
-  }
+  }, [])
 
   /**
    * Tracking durdur
