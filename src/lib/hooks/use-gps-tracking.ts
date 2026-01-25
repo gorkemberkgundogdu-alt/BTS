@@ -24,7 +24,7 @@ export function useGPSTracking() {
     try {
       const { error: insertError } = await supabase
         .from('gps_locations')
-        .insert({
+        .insert([{
           user_id: user.id,
           latitude: location.latitude,
           longitude: location.longitude,
@@ -32,7 +32,7 @@ export function useGPSTracking() {
           speed: location.speed,
           heading: location.heading,
           recorded_at: new Date(location.timestamp).toISOString()
-        })
+        }] as any)
 
       if (insertError) {
         console.error('GPS veri gönderme hatası:', insertError)

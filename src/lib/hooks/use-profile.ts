@@ -56,7 +56,7 @@ export function useProfile() {
         .from('municipalities')
         .select('district')
         .eq('id', data.municipality_id)
-        .single()
+        .single<{ district: string }>()
 
       const district = municipalityData?.district || ''
 

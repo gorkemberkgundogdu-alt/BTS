@@ -122,14 +122,14 @@ export function useAuth() {
       .from('municipalities')
       .select('district')
       .eq('id', municipality_id)
-      .single()
+      .single<{ district: string }>()
 
     const district = municipalityData?.district || ''
 
     // 3. Create profile immediately (don't rely on trigger)
     const { error: profileError } = await supabase
       .from('profiles')
-      .insert({
+      .insert([{
         id: authData.user.id,
         email,
         role,
@@ -141,7 +141,7 @@ export function useAuth() {
         department: department || null,
         employee_id: employee_id || null,
         status: 'active',
-      })
+      }] as any)
 
     if (profileError) {
       console.error('Profile creation error:', profileError)

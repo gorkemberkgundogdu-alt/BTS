@@ -114,7 +114,7 @@ export default function RegisterPage() {
           <CardHeader>
             <CardTitle className="text-center text-2xl">Kayıt Başarılı!</CardTitle>
             <CardDescription className="text-center">
-              Dashboard'a yönlendiriliyorsunuz...
+              Dashboard&apos;a yönlendiriliyorsunuz...
             </CardDescription>
           </CardHeader>
         </Card>

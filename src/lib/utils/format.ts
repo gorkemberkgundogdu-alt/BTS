@@ -50,7 +50,7 @@ export function formatPercentage(value: number, decimals = 0): string {
   return `%${formatNumber(value, decimals)}`
 }
 
-export function formatDistance(km: number): string {
+export function formatDistanceKm(km: number): string {
   if (km < 1) {
     return `${formatNumber(km * 1000)} m`
   }

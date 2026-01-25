@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -39,7 +39,7 @@ export default function LoginPage() {
         .from('profiles')
         .select('role')
         .eq('id', result.user?.id)
-        .single()
+        .single<{ role: string }>()
       
       console.log('3. Profile data:', profileData, 'Error:', profileError)
       
@@ -114,5 +114,17 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { MapContainer } from '@/components/maps/map-container'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/use-auth'
@@ -30,7 +30,7 @@ export function TrackingMap() {
   const [personnel, setPersonnel] = useState<Personnel[]>([])
   const [routes, setRoutes] = useState<Route[]>([])
   const [map, setMap] = useState<maplibregl.Map | null>(null)
-  const markers = new Map<string, maplibregl.Marker>()
+  const markersRef = useRef(new Map<string, maplibregl.Marker>())
 
   /**
    * Personel ve konum verilerini yükle
@@ -45,6 +45,7 @@ export function TrackingMap() {
         .select('id, full_name, avatar_url')
         .eq('role', 'personnel')
         .eq('status', 'active')
+        .returns<Array<{ id: string; full_name: string; avatar_url?: string }>>()
 
       // Her personel için son GPS konumu
       if (personnelData) {
@@ -123,6 +124,8 @@ export function TrackingMap() {
    */
   useEffect(() => {
     if (!map) return
+
+    const markers = markersRef.current
 
     // Eski marker'ları temizle
     markers.forEach((marker) => marker.remove())

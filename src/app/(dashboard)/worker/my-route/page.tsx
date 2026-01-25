@@ -128,7 +128,7 @@ export default function MyRoutePage() {
               </div>
               <Button
                 size="sm"
-                variant={isTracking ? 'outline' : 'default'}
+                variant={isTracking ? 'outline' : 'primary'}
                 onClick={isTracking ? stopTracking : startTracking}
               >
                 {isTracking ? 'Durdur' : 'Başlat'}
