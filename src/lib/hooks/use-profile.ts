@@ -106,11 +106,30 @@ export function useProfile() {
     )
   }
 
+  const refreshProfile = async () => {
+    if (!user) return
+
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+
+      if (data) {
+        setProfile(data as never)
+      }
+    } catch (error) {
+      console.error('Profile refresh error:', error)
+    }
+  }
+
   return {
     profile,
     isLoading,
     isProfileComplete: isProfileComplete(),
     updateProfile,
     completeProfile,
+    refreshProfile,
   }
 }

@@ -172,10 +172,12 @@ export interface Database {
           id: string
           municipality_id: string | null
           route_id: string | null
-          assigned_personnel: string | null
+          assigned_to: string | null
           created_by: string | null
-          scheduled_date: string
-          status: 'beklemede' | 'devam_ediyor' | 'tamamlandi' | 'iptal'
+          scheduled_start: string | null
+          title: string
+          description: string | null
+          status: 'assigned' | 'in_progress' | 'completed' | 'cancelled'
           assigned_vehicle: string | null
           scheduled_miles: number | null
           completed_miles: number | null
@@ -192,10 +194,12 @@ export interface Database {
           id?: string
           municipality_id?: string | null
           route_id?: string | null
-          assigned_personnel?: string | null
+          assigned_to?: string | null
           created_by?: string | null
-          scheduled_date: string
-          status?: 'beklemede' | 'devam_ediyor' | 'tamamlandi' | 'iptal'
+          scheduled_start?: string | null
+          title: string
+          description?: string | null
+          status?: 'assigned' | 'in_progress' | 'completed' | 'cancelled'
           assigned_vehicle?: string | null
           scheduled_miles?: number | null
           completed_miles?: number | null
@@ -212,10 +216,12 @@ export interface Database {
           id?: string
           municipality_id?: string | null
           route_id?: string | null
-          assigned_personnel?: string | null
+          assigned_to?: string | null
           created_by?: string | null
-          scheduled_date?: string
-          status?: 'beklemede' | 'devam_ediyor' | 'tamamlandi' | 'iptal'
+          scheduled_start?: string | null
+          title?: string
+          description?: string | null
+          status?: 'assigned' | 'in_progress' | 'completed' | 'cancelled'
           assigned_vehicle?: string | null
           scheduled_miles?: number | null
           completed_miles?: number | null
@@ -232,7 +238,7 @@ export interface Database {
       gps_locations: {
         Row: {
           id: string
-          personnel_id: string
+          user_id: string
           task_id: string | null
           latitude: number
           longitude: number
@@ -245,7 +251,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          personnel_id: string
+          user_id: string
           task_id?: string | null
           latitude: number
           longitude: number
@@ -258,7 +264,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          personnel_id?: string
+          user_id?: string
           task_id?: string | null
           latitude?: number
           longitude?: number

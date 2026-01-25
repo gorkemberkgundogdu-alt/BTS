@@ -1,8 +1,8 @@
 'use client'
 
-import { Bell, LogOut, User } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { NotificationBell } from '@/components/dashboard/notification-bell'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 
@@ -51,12 +51,7 @@ export function Header({ title, description }: HeaderProps) {
           </div>
 
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative">
-            <Bell className="h-5 w-5" />
-            <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center">
-              3
-            </Badge>
-          </Button>
+          <NotificationBell />
 
           {/* Logout */}
           <Button 

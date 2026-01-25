@@ -86,23 +86,28 @@ export function TaskList() {
 
     try {
       // 1. GPS tracking'i başlat
-      await startTracking()
+      const trackingStarted = await startTracking()
+      
+      // Eğer tracking başlatılamadıysa hata göster
+      if (!trackingStarted) {
+        throw new Error('GPS izni alınamadı')
+      }
 
       // 2. Görevi başlat
-      const { error } = await (supabase
-        .from('tasks') as any)
+      const { error } = await supabase
+        .from('tasks')
         .update({ 
           status: 'in_progress',
           started_at: new Date().toISOString() 
         })
         .eq('id', taskId)
       
-      if (error) {
-        throw error
-      }
+      if (error) throw error
+
+      alert('Görev başlatıldı! GPS takibi aktif.')
     } catch (err) {
       console.error('Görev başlatma hatası:', err)
-      alert('Görev başlatılamadı. GPS izni verildiğinden emin olun.')
+      alert('Görev başlatılamadı. GPS izni verildiğinden emin olun ve tekrar deneyin.')
     } finally {
       setStartingTask(null)
     }
@@ -110,15 +115,27 @@ export function TaskList() {
 
   // Görevi tamamla
   const handleCompleteTask = async (taskId: string) => {
-    const { error } = await (supabase
-      .from('tasks') as any)
-      .update({ 
-        status: 'completed',
-        completed_at: new Date().toISOString() 
-      })
-      .eq('id', taskId)
+    const confirmed = confirm('Bu görevi tamamladınız mı?')
+    if (!confirmed) return
 
-    if (error) {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({ 
+          status: 'completed',
+          completed_at: new Date().toISOString() 
+        })
+        .eq('id', taskId)
+
+      if (error) throw error
+
+      // GPS tracking'i durdur
+      // Bu göreve ait tüm GPS noktalarını trace olarak kaydet
+      // (İleride eklenebilir)
+      
+      alert('Görev başarıyla tamamlandı!')
+    } catch (err) {
+      console.error('Görev tamamlama hatası:', err)
       alert('Görev tamamlanamadı')
     }
   }

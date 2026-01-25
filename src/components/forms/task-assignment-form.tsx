@@ -71,8 +71,19 @@ export function TaskAssignmentForm() {
     setSuccess(false)
 
     try {
-      // Görev oluştur
-      const { error: taskError } = await supabase
+      // 1. Kullanıcının belediye ID'sini al
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('municipality_id')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile?.municipality_id) {
+        throw new Error('Belediye bilgisi bulunamadı')
+      }
+
+      // 2. Görev oluştur
+      const { data: newTask, error: taskError } = await supabase
         .from('tasks')
         .insert([{
           title: data.title,
@@ -82,14 +93,35 @@ export function TaskAssignmentForm() {
           scheduled_start: data.scheduled_start || null,
           status: 'assigned',
           created_by: user.id,
-        }] as any)
+          municipality_id: profile.municipality_id,
+        }])
+        .select()
+        .single()
 
       if (taskError) throw taskError
+
+      // 3. Personele bildirim oluştur
+      const { data: assignedPerson } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', data.assigned_to)
+        .single()
+
+      await supabase
+        .from('notifications')
+        .insert([{
+          user_id: data.assigned_to,
+          municipality_id: profile.municipality_id,
+          title: 'Yeni Görev Atandı',
+          body: `"${data.title}" görevine atandınız`,
+          type: 'task_assigned',
+          data: { task_id: newTask.id, task_title: data.title }
+        }])
 
       setSuccess(true)
       reset()
 
-      // 2 saniye sonra success mesajını kaldır
+      // 3 saniye sonra success mesajını kaldır
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Görev oluşturulamadı')

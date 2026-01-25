@@ -70,12 +70,22 @@ export function MapContainer({
       'top-right'
     )
 
-    // On load event
+    // On style.load event - harita tamamen hazır olduğunda
+    map.current.on('style.load', () => {
+      console.log('Map style loaded')
+    })
+
+    // On load event - harita yüklendiğinde
     map.current.on('load', () => {
       setIsLoaded(true)
       if (onLoad && map.current) {
         onLoad(map.current)
       }
+    })
+
+    // Error handling
+    map.current.on('error', (e) => {
+      console.error('Map error:', e)
     })
 
     // Cleanup

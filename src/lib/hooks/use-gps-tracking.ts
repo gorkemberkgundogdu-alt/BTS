@@ -74,11 +74,11 @@ export function useGPSTracking() {
   /**
    * Tracking başlat
    */
-  const startTracking = useCallback(async () => {
+  const startTracking = useCallback(async (): Promise<boolean> => {
     // Önce internet kontrolü
     if (!isOnline) {
       setError('İnternet bağlantısı yok. Uçak modunu kapatın veya WiFi açın.')
-      return
+      return false
     }
 
     try {
@@ -89,7 +89,7 @@ export function useGPSTracking() {
       if (!hasPermission) {
         setError('Konum izni gerekli. Lütfen tarayıcı ayarlarından izin verin.')
         setPermissionStatus('denied')
-        return
+        return false
       }
 
       await trackingService.startTracking(
@@ -124,13 +124,15 @@ export function useGPSTracking() {
 
       setIsTracking(true)
       setPermissionStatus('granted')
+      return true
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'GPS başlatılamadı'
       setError(errorMessage)
       setPermissionStatus('denied')
       setIsTracking(false)
+      return false
     }
-  }, [trackingService, sendLocationToServer, isOnline])
+  }, [trackingService, sendLocationToServer, isOnline, checkPermission])
 
   /**
    * Konum iznini kontrol et

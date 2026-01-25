@@ -57,7 +57,7 @@ export function TrackingMap() {
               .eq('user_id', p.id)
               .order('recorded_at', { ascending: false })
               .limit(1)
-              .single()
+              .maybeSingle()
 
             return {
               ...p,
@@ -73,7 +73,7 @@ export function TrackingMap() {
       const { data: routesData } = await supabase
         .from('routes')
         .select('id, name, code, geojson')
-        .eq('status', 'active')
+        .eq('active', true)
 
       if (routesData) {
         setRoutes(routesData)
@@ -200,7 +200,7 @@ export function TrackingMap() {
    * Haritada rotaları çiz
    */
   useEffect(() => {
-    if (!map) return
+    if (!map || !map.isStyleLoaded()) return
 
     routes.forEach((route) => {
       if (!route.geojson) return
@@ -208,8 +208,13 @@ export function TrackingMap() {
       const sourceId = `route-${route.id}`
       const layerId = `route-layer-${route.id}`
 
-      // Source ekle
-      if (!map.getSource(sourceId)) {
+      // Eğer source veya layer zaten varsa, skip et
+      if (map.getSource(sourceId)) {
+        return
+      }
+
+      try {
+        // Source ekle
         map.addSource(sourceId, {
           type: 'geojson',
           data: route.geojson
@@ -238,8 +243,25 @@ export function TrackingMap() {
 
         // Click event
         map.on('click', layerId, () => {
-          alert(`Rota: ${route.name} (${route.code})`)
+          const popup = new maplibregl.Popup({ closeButton: true })
+            .setHTML(`
+              <div class="p-2">
+                <p class="font-bold text-white">${route.name}</p>
+                <p class="text-xs text-slate-400">Kod: ${route.code}</p>
+              </div>
+            `)
+          
+          // Rota geometrisinin ilk koordinatını al
+          const coords = route.geojson.type === 'FeatureCollection' 
+            ? route.geojson.features[0]?.geometry?.coordinates[0]
+            : route.geojson.coordinates?.[0]
+          
+          if (coords) {
+            popup.setLngLat(coords).addTo(map)
+          }
         })
+      } catch (error) {
+        console.error(`Rota çizim hatası (${route.name}):`, error)
       }
     })
   }, [map, routes])

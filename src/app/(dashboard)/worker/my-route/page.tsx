@@ -42,14 +42,22 @@ export default function MyRoutePage() {
           title,
           description,
           status,
-          route:routes(name, geojson)
+          routes (
+            name,
+            geojson
+          )
         `)
         .eq('assigned_to', user.id)
-        .in('status', ['pending', 'in_progress'])
+        .in('status', ['assigned', 'in_progress'])
         .order('created_at', { ascending: false })
 
       if (data) {
-        setTasks(data as any)
+        // Transform data to match expected structure
+        const transformedData = data.map(task => ({
+          ...task,
+          route: task.routes ? (Array.isArray(task.routes) ? task.routes[0] : task.routes) : null
+        }))
+        setTasks(transformedData as any)
       }
     }
 
@@ -58,7 +66,7 @@ export default function MyRoutePage() {
 
   // Haritaya rotaları çiz
   useEffect(() => {
-    if (!map || tasks.length === 0) return
+    if (!map || !map.isStyleLoaded()) return
 
     tasks.forEach((task) => {
       if (!task.route?.geojson) return
@@ -66,7 +74,12 @@ export default function MyRoutePage() {
       const sourceId = `my-route-${task.id}`
       const layerId = `my-route-layer-${task.id}`
 
-      if (!map.getSource(sourceId)) {
+      // Eğer source zaten varsa, skip et
+      if (map.getSource(sourceId)) {
+        return
+      }
+
+      try {
         map.addSource(sourceId, {
           type: 'geojson',
           data: task.route.geojson
@@ -82,6 +95,8 @@ export default function MyRoutePage() {
             'line-opacity': 0.8
           }
         })
+      } catch (error) {
+        console.error('Rota çizim hatası:', error)
       }
     })
 
@@ -101,7 +116,8 @@ export default function MyRoutePage() {
       // Kendi konumuna zoom
       map.flyTo({
         center: [currentLocation.longitude, currentLocation.latitude],
-        zoom: 14
+        zoom: 14,
+        duration: 1000
       })
     }
   }, [map, tasks, currentLocation])
