@@ -17,11 +17,21 @@ export default function DashboardLayout({
   const { isProfileComplete } = useProfile()
 
   useEffect(() => {
+    console.log('🏠 [dashboard-layout] useEffect:', {
+      isLoading,
+      isAuthenticated,
+      isProfileComplete
+    })
+    
     if (!isLoading) {
       if (!isAuthenticated) {
+        console.log('🔒 [dashboard-layout] Redirecting to LOGIN')
         router.push('/login')
       } else if (!isProfileComplete) {
+        console.log('⚠️ [dashboard-layout] Redirecting to COMPLETE-PROFILE')
         router.push('/complete-profile')
+      } else {
+        console.log('✅ [dashboard-layout] User is AUTHENTICATED and profile COMPLETE')
       }
     }
   }, [isAuthenticated, isLoading, isProfileComplete, router])

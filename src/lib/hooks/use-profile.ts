@@ -112,6 +112,7 @@ export function useProfile() {
     }
   }
 
+  // #region agent log
   // Profile completeness check
   const isProfileComplete = !profile ? false : !!(
     profile.full_name &&
@@ -120,6 +121,15 @@ export function useProfile() {
     profile.district &&
     profile.municipality_id
   )
+  
+  // DEBUG LOG: Track isProfileComplete calculation
+  console.log('🔍 [use-profile] isProfileComplete calculated:', {
+    hasProfile: !!profile,
+    isComplete: isProfileComplete,
+    profileKeys: profile ? Object.keys(profile) : [],
+    timestamp: new Date().toISOString()
+  })
+  // #endregion
 
   return {
     profile,

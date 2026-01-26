@@ -17,11 +17,19 @@ export function useAuth() {
 
   useEffect(() => {
     let isMounted = true
+    console.log('🚀 [use-auth] useEffect MOUNTED')
     
     // Initial session check
     const checkSession = async () => {
+      console.log('🔄 [use-auth] checkSession CALLED')
+      
       try {
         const { data: { session } } = await supabase.auth.getSession()
+        console.log('📡 [use-auth] session fetched:', {
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          isMounted
+        })
         
         if (isMounted && session?.user) {
           setUser(session.user)
@@ -32,6 +40,11 @@ export function useAuth() {
             .select('*')
             .eq('id', session.user.id)
             .single()
+          
+          console.log('👤 [use-auth] profile fetched:', {
+            hasProfile: !!profileData,
+            isMounted
+          })
           
           if (isMounted) {
             setProfile(profileData)
@@ -44,6 +57,7 @@ export function useAuth() {
       } finally {
         if (isMounted) {
           setIsLoading(false)
+          console.log('✅ [use-auth] isLoading set to FALSE')
         }
       }
     }
@@ -52,7 +66,13 @@ export function useAuth() {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
+        console.log('🔔 [use-auth] onAuthStateChange TRIGGERED:', {
+          event,
+          hasSession: !!session,
+          isMounted
+        })
+        
         if (!isMounted) return
         
         if (session?.user) {
@@ -76,6 +96,7 @@ export function useAuth() {
     )
 
     return () => {
+      console.log('🧹 [use-auth] CLEANUP')
       isMounted = false
       subscription.unsubscribe()
     }

@@ -56,10 +56,13 @@ export class GPSTrackingService {
     this.onLocationUpdate = onUpdate
     this.onError = onError
 
-    // İzin iste
-    const permission = await this.requestPermission()
-    if (!permission) {
-      throw new Error('Konum izni reddedildi')
+    // İlk konum al (izin kontrolü için)
+    try {
+      await this.getCurrentPosition()
+      console.log('✅ GPS izni alındı, tracking başlatılıyor')
+    } catch (error) {
+      console.error('❌ GPS izni alınamadı:', error)
+      throw new Error('Konum izni reddedildi. Lütfen tarayıcı ayarlarından konum iznini açın.')
     }
 
     // Tracking başlat
