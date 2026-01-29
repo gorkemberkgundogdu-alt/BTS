@@ -123,9 +123,9 @@ export default function DevicesPage() {
     try {
       // Update user_id for existing locations with this device_id
       const locationUpdates = Array.from(mappings.entries()).map(([deviceId, userId]) => {
-        return supabase
-          .from('gps_locations')
-          .update({ user_id: userId } as any)
+        return (supabase
+          .from('gps_locations') as any)
+          .update({ user_id: userId })
           .eq('device_id', deviceId)
           .is('user_id', null)
       })
@@ -153,9 +153,9 @@ export default function DevicesPage() {
 
     try {
       // Set user_id to null for all locations with this device_id
-      await supabase
-        .from('gps_locations')
-        .update({ user_id: null } as any)
+      await (supabase
+        .from('gps_locations') as any)
+        .update({ user_id: null })
         .eq('device_id', deviceId)
 
       await loadProfiles()
