@@ -73,8 +73,8 @@ export type Database = {
       gps_locations: {
         Row: {
           id: string
+          device_id: string
           user_id: string | null
-          task_id: string | null
           municipality_id: string | null
           latitude: number
           longitude: number
@@ -82,17 +82,14 @@ export type Database = {
           heading: number | null
           altitude: number | null
           accuracy: number | null
-          source: string | null
-          device_id: string | null
           battery_level: number | null
-          traccar_position_id: number | null
           recorded_at: string
           created_at: string
         }
         Insert: {
           id?: string
+          device_id: string
           user_id?: string | null
-          task_id?: string | null
           municipality_id?: string | null
           latitude: number
           longitude: number
@@ -100,17 +97,14 @@ export type Database = {
           heading?: number | null
           altitude?: number | null
           accuracy?: number | null
-          source?: string | null
-          device_id?: string | null
           battery_level?: number | null
-          traccar_position_id?: number | null
           recorded_at?: string
           created_at?: string
         }
         Update: {
           id?: string
+          device_id?: string
           user_id?: string | null
-          task_id?: string | null
           municipality_id?: string | null
           latitude?: number
           longitude?: number
@@ -118,10 +112,7 @@ export type Database = {
           heading?: number | null
           altitude?: number | null
           accuracy?: number | null
-          source?: string | null
-          device_id?: string | null
           battery_level?: number | null
-          traccar_position_id?: number | null
           recorded_at?: string
           created_at?: string
         }
