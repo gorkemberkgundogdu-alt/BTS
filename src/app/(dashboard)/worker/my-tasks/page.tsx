@@ -1,3 +1,5 @@
+'use client'
+
 import { Header } from '@/components/dashboard/header'
 import { TaskList } from '@/components/dashboard/task-list'
 

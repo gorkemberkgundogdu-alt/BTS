@@ -1,3 +1,5 @@
+'use client'
+
 import { Header } from '@/components/dashboard/header'
 import { TaskAssignmentForm } from '@/components/forms/task-assignment-form'
 
