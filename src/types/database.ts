@@ -238,7 +238,7 @@ export interface Database {
       gps_locations: {
         Row: {
           id: string
-          user_id: string
+          user_id: string | null
           task_id: string | null
           latitude: number
           longitude: number
@@ -246,12 +246,16 @@ export interface Database {
           speed: number | null
           heading: number | null
           altitude: number | null
+          source: 'browser' | 'traccar' | 'hardware'
+          device_id: string | null
+          battery_level: number | null
+          traccar_position_id: number | null
           recorded_at: string
           created_at: string
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id?: string | null
           task_id?: string | null
           latitude: number
           longitude: number
@@ -259,12 +263,16 @@ export interface Database {
           speed?: number | null
           heading?: number | null
           altitude?: number | null
+          source?: 'browser' | 'traccar' | 'hardware'
+          device_id?: string | null
+          battery_level?: number | null
+          traccar_position_id?: number | null
           recorded_at?: string
           created_at?: string
         }
         Update: {
           id?: string
-          user_id?: string
+          user_id?: string | null
           task_id?: string | null
           latitude?: number
           longitude?: number
@@ -272,6 +280,10 @@ export interface Database {
           speed?: number | null
           heading?: number | null
           altitude?: number | null
+          source?: 'browser' | 'traccar' | 'hardware'
+          device_id?: string | null
+          battery_level?: number | null
+          traccar_position_id?: number | null
           recorded_at?: string
           created_at?: string
         }

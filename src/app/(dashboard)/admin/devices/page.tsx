@@ -7,6 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
 import { Smartphone, User, Link as LinkIcon, Unlink, Search, Save, Trash2 } from 'lucide-react'
+import type { Database } from '@/types/database'
+
+type GpsLocation = Database['public']['Tables']['gps_locations']['Row']
 
 interface UnmappedDevice {
   device_id: string
@@ -50,7 +53,7 @@ export default function DevicesPage() {
       .from('gps_locations')
       .select('device_id, recorded_at, latitude, longitude, battery_level, user_id')
       .not('device_id', 'is', null)
-      .order('recorded_at', { ascending: false })
+      .order('recorded_at', { ascending: false }) as { data: GpsLocation[] | null }
 
     if (!data) return
 
