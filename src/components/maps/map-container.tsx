@@ -25,11 +25,13 @@ export function MapContainer({
   useEffect(() => {
     if (!mapContainer.current || map.current) return
 
-    // Initialize map
+    // Initialize map with detailed OSM style (dark theme)
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       style: {
         version: 8,
+        name: 'BTS Dark Map',
+        glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
             type: 'raster',
@@ -43,19 +45,36 @@ export function MapContainer({
           }
         },
         layers: [
+          // Background layer - dark gray
+          {
+            id: 'background',
+            type: 'background',
+            paint: {
+              'background-color': '#1a1f2e'
+            }
+          },
+          // OSM raster tiles layer with dark overlay
           {
             id: 'osm-tiles',
             type: 'raster',
             source: 'osm-tiles',
             minzoom: 0,
-            maxzoom: 19
+            maxzoom: 19,
+            paint: {
+              'raster-opacity': 0.85,
+              'raster-brightness-min': 0.3,
+              'raster-brightness-max': 0.7,
+              'raster-contrast': 0.2,
+              'raster-saturation': -0.3
+            }
           }
         ]
       },
       center,
       zoom,
-      maxZoom: 18,
-      minZoom: 5
+      maxZoom: 19,
+      minZoom: 5,
+      attributionControl: true
     })
 
     // Add navigation controls

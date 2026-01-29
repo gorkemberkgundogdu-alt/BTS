@@ -28,23 +28,49 @@ function LoginForm() {
   })
 
   const onSubmit = async (data: LoginInput) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:30',message:'onSubmit STARTED',data:{email:data.email},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    
     try {
       setError(null)
       console.log('1. Login başladı...')
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:38',message:'BEFORE login() call',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      
       const result = await login(data)
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:45',message:'AFTER login() call',data:{hasUser:!!result.user,userId:result.user?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      
       console.log('2. Login başarılı:', result.user?.id)
       
       // Get user's profile to check role
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:52',message:'BEFORE profile fetch',data:{userId:result.user?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
+      
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', result.user?.id)
         .single<{ role: string }>()
       
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:63',message:'AFTER profile fetch',data:{hasProfile:!!profileData,role:profileData?.role,hasError:!!profileError,error:profileError?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
+      
       console.log('3. Profile data:', profileData, 'Error:', profileError)
       
       // Redirect based on role
       const redirect = searchParams.get('redirect')
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:75',message:'BEFORE redirect',data:{redirect:redirect,role:profileData?.role},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
       
       // Eğer redirect '/' veya boşsa, role'e göre yönlendir
       if (redirect && redirect !== '/') {
@@ -55,8 +81,21 @@ function LoginForm() {
         console.log('5. Redirecting to:', targetUrl, 'Role:', profileData?.role)
         router.push(targetUrl)
       }
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:91',message:'AFTER router.push, BEFORE refresh',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      
       router.refresh()
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:98',message:'onSubmit COMPLETED',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
     } catch (err) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:103',message:'onSubmit ERROR CAUGHT',data:{error:err instanceof Error ? err.message : String(err)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      
       console.error('Login error:', err)
       setError(err instanceof Error ? err.message : 'Giriş başarısız oldu')
     }

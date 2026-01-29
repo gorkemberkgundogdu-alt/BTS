@@ -77,17 +77,7 @@ export function useAuth() {
         
         if (session?.user) {
           setUser(session.user)
-          
-          // Fetch profile
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single()
-          
-          if (isMounted) {
-            setProfile(profileData)
-          }
+          // Profile login sayfasında alınıyor, burada tekrar almaya gerek yok
         } else {
           reset()
         }
@@ -103,14 +93,27 @@ export function useAuth() {
   }, [supabase, setUser, setProfile, setIsLoading, reset])
 
   const login = async ({ email, password }: LoginInput) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    console.log('🔐 [use-auth] login() STARTED')
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    if (error) throw error
+      console.log('🔐 [use-auth] login() RESPONSE:', { hasData: !!data, hasError: !!error })
 
-    return data
+      if (error) {
+        console.error('🔐 [use-auth] login() ERROR:', error)
+        throw error
+      }
+
+      console.log('🔐 [use-auth] login() SUCCESS')
+      return data
+    } catch (err) {
+      console.error('🔐 [use-auth] login() CATCH:', err)
+      throw err
+    }
   }
 
   const register = async ({ 
