@@ -72,6 +72,23 @@ export function useGPSTracking() {
   }, [user?.id, supabase])
 
   /**
+   * Konum iznini kontrol et
+   */
+  const checkPermission = useCallback(async (): Promise<boolean> => {
+    try {
+      if ('permissions' in navigator) {
+        const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName })
+        const newStatus = result.state === 'granted' ? 'granted' : result.state === 'denied' ? 'denied' : 'prompt'
+        setPermissionStatus(newStatus)
+        return result.state !== 'denied'
+      }
+      return true
+    } catch {
+      return true // Safari doesn't support permissions API fully
+    }
+  }, [])
+
+  /**
    * Tracking başlat
    */
   const startTracking = useCallback(async (): Promise<boolean> => {
@@ -145,23 +162,6 @@ export function useGPSTracking() {
       return false
     }
   }, [trackingService, sendLocationToServer, isOnline, checkPermission])
-
-  /**
-   * Konum iznini kontrol et
-   */
-  const checkPermission = useCallback(async (): Promise<boolean> => {
-    try {
-      if ('permissions' in navigator) {
-        const result = await navigator.permissions.query({ name: 'geolocation' as PermissionName })
-        const newStatus = result.state === 'granted' ? 'granted' : result.state === 'denied' ? 'denied' : 'prompt'
-        setPermissionStatus(newStatus)
-        return result.state !== 'denied'
-      }
-      return true
-    } catch {
-      return true // Safari doesn't support permissions API fully
-    }
-  }, [])
 
   /**
    * Tracking durdur

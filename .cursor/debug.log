@@ -1,0 +1,16 @@
+{"location":"login/page.tsx:52","message":"BEFORE profile fetch","data":{"userId":"4994cfc4-7e9e-4743-bee9-aaba425f43f4"},"timestamp":1769755808482,"sessionId":"debug-session","hypothesisId":"C"}
+{"location":"login/page.tsx:30","message":"onSubmit STARTED","data":{"email":"mr.gndd7@gmail.com"},"timestamp":1769755806571,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"login/page.tsx:63","message":"AFTER profile fetch","data":{"hasProfile":true,"role":"admin","hasError":false},"timestamp":1769755809495,"sessionId":"debug-session","hypothesisId":"C"}
+{"location":"login/page.tsx:45","message":"AFTER login() call","data":{"hasUser":true,"userId":"4994cfc4-7e9e-4743-bee9-aaba425f43f4"},"timestamp":1769755808482,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"login/page.tsx:75","message":"BEFORE redirect","data":{"redirect":null,"role":"admin"},"timestamp":1769755809495,"sessionId":"debug-session","hypothesisId":"D"}
+{"location":"login/page.tsx:38","message":"BEFORE login() call","data":{},"timestamp":1769755806572,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"login/page.tsx:91","message":"AFTER router.push, BEFORE refresh","data":{},"timestamp":1769755809496,"sessionId":"debug-session","hypothesisId":"D"}
+{"location":"login/page.tsx:98","message":"onSubmit COMPLETED","data":{},"timestamp":1769755809496,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"login/page.tsx:52","message":"BEFORE profile fetch","data":{"userId":"bed6a63d-85ff-463d-9dcd-7b19261a3445"},"timestamp":1769755919530,"sessionId":"debug-session","hypothesisId":"C"}
+{"location":"login/page.tsx:45","message":"AFTER login() call","data":{"hasUser":true,"userId":"bed6a63d-85ff-463d-9dcd-7b19261a3445"},"timestamp":1769755919529,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"login/page.tsx:30","message":"onSubmit STARTED","data":{"email":"gorkemberkgundogdu@gmail.com"},"timestamp":1769755918953,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"login/page.tsx:63","message":"AFTER profile fetch","data":{"hasProfile":true,"role":"personnel","hasError":false},"timestamp":1769755919890,"sessionId":"debug-session","hypothesisId":"C"}
+{"location":"login/page.tsx:75","message":"BEFORE redirect","data":{"redirect":null,"role":"personnel"},"timestamp":1769755919890,"sessionId":"debug-session","hypothesisId":"D"}
+{"location":"login/page.tsx:38","message":"BEFORE login() call","data":{},"timestamp":1769755918953,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"login/page.tsx:91","message":"AFTER router.push, BEFORE refresh","data":{},"timestamp":1769755919891,"sessionId":"debug-session","hypothesisId":"D"}
+{"location":"login/page.tsx:98","message":"onSubmit COMPLETED","data":{},"timestamp":1769755919891,"sessionId":"debug-session","hypothesisId":"A"}
