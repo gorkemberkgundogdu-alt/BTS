@@ -212,20 +212,13 @@ export function LiveTrackingMap({
 
   // Initialize map
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'live-tracking-map.tsx:274',message:'Map init useEffect triggered',data:{hasContainer:!!mapContainer.current,hasMap:!!map.current,isLoaded},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,C'})}).catch(()=>{});
-    // #endregion
     if (!mapContainer.current || map.current) return
-
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'live-tracking-map.tsx:278',message:'Creating new map instance',data:{center,zoom},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,C'})}).catch(()=>{});
-    // #endregion
 
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       style: {
         version: 8,
-        name: 'BTS Live Tracking',
+        name: 'BTS Live Tracking - Premium',
         glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
         sources: {
           'osm-tiles': {
@@ -244,7 +237,7 @@ export function LiveTrackingMap({
             id: 'background',
             type: 'background',
             paint: {
-              'background-color': '#1a1f2e'
+              'background-color': '#f8f9fa'
             }
           },
           {
@@ -254,11 +247,11 @@ export function LiveTrackingMap({
             minzoom: 0,
             maxzoom: 19,
             paint: {
-              'raster-opacity': 0.85,
-              'raster-brightness-min': 0.3,
-              'raster-brightness-max': 0.7,
-              'raster-contrast': 0.2,
-              'raster-saturation': -0.3
+              'raster-opacity': 1.0,
+              'raster-brightness-min': 0.0,
+              'raster-brightness-max': 1.0,
+              'raster-contrast': 0.1,
+              'raster-saturation': 0.0
             }
           }
         ]
@@ -266,24 +259,20 @@ export function LiveTrackingMap({
       center,
       zoom,
       maxZoom: 19,
-      minZoom: 5
+      minZoom: 5,
+      pitch: 0,
+      bearing: 0
     })
 
     // Add navigation controls
     map.current.addControl(new maplibregl.NavigationControl(), 'top-right')
 
     map.current.on('load', () => {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'live-tracking-map.tsx:328',message:'Map loaded event fired',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       setIsLoaded(true)
     })
 
     // Cleanup
     return () => {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'live-tracking-map.tsx:334',message:'Map cleanup running',data:{hadMap:!!map.current},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,C'})}).catch(()=>{});
-      // #endregion
       if (map.current) {
         const currentMarkers = markers.current
         currentMarkers.forEach(marker => marker.remove())
@@ -296,9 +285,6 @@ export function LiveTrackingMap({
 
   // Setup realtime subscription and initial load
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'live-tracking-map.tsx:346',message:'Realtime subscription useEffect triggered',data:{isLoaded},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B,D'})}).catch(()=>{});
-    // #endregion
     if (!isLoaded) return
 
     // Load initial personnel data
@@ -352,10 +338,6 @@ export function LiveTrackingMap({
       }
     })()
 
-    // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'live-tracking-map.tsx:351',message:'Creating realtime subscription',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
-
     const channel = supabase
       .channel('live-gps-tracking')
       .on(
@@ -401,9 +383,6 @@ export function LiveTrackingMap({
       .subscribe()
 
     return () => {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'live-tracking-map.tsx:393',message:'Realtime subscription cleanup running',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
       supabase.removeChannel(channel)
     }
   }, [isLoaded]) // REMOVED: supabase, updatePersonnelMarker, updatePersonnelTrail, showTrails

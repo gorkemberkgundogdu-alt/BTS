@@ -28,11 +28,6 @@ interface RecentTask {
 }
 
 export default function AdminDashboardPage() {
-  // #region agent log
-  if (typeof window !== 'undefined') {
-    fetch('http://127.0.0.1:7243/ingest/1ceb7883-60b4-41d0-86a3-72ad12f7f817',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin-page.tsx:29',message:'Admin dashboard component render',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'E'})}).catch(()=>{});
-  }
-  // #endregion
   const supabase = createClient()
   const { user } = useAuth()
   const [stats, setStats] = useState<DashboardStats>({
