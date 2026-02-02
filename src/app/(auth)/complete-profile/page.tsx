@@ -67,13 +67,13 @@ export default function CompleteProfilePage() {
           .order('name')
 
         if (error) {
-          console.error('Belediye yükleme hatası:', error)
+          console.error('❌ Belediye yükleme hatası:', error)
           setMunicipalities([])
         } else if (data) {
-          console.log(`${selectedCity} için ${data.length} belediye yüklendi`)
+          console.log(`✅ ${selectedCity} için ${data.length} belediye yüklendi:`, data.slice(0, 3).map(m => m.name))
           setMunicipalities(data)
         } else {
-          console.log(`${selectedCity} için belediye bulunamadı`)
+          console.log(`⚠️ ${selectedCity} için belediye bulunamadı`)
           setMunicipalities([])
         }
       } catch (err) {
