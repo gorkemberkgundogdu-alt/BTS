@@ -21,6 +21,11 @@ interface Personnel {
   status: string
   avatar_url: string | null
   created_at: string
+  latest_location?: {
+    latitude: number
+    longitude: number
+    recorded_at: string
+  } | null
   device_mappings?: Array<{
     device_id: string
     is_active: boolean
