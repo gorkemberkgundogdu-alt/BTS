@@ -14,11 +14,18 @@ export const metadata: Metadata = {
     statusBarStyle: 'black-translucent',
     title: 'BTS'
   },
+  other: {
+    'mobile-web-app-capable': 'yes'
+  },
   viewport: {
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
     userScalable: false
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png'
   }
 }
 

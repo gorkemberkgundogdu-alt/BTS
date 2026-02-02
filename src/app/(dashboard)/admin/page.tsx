@@ -28,7 +28,6 @@ interface RecentTask {
 }
 
 export default function AdminDashboardPage() {
-  const supabase = createClient()
   const { user } = useAuth()
   const [stats, setStats] = useState<DashboardStats>({
     active_tasks: 0,
@@ -41,6 +40,8 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     if (!user) return
+
+    const supabase = createClient()
 
     const loadDashboardData = async () => {
       // Aktif görevler
@@ -120,7 +121,7 @@ export default function AdminDashboardPage() {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [user, supabase])
+  }, [user])
 
   const getStatusBadge = (status: string) => {
     switch (status) {
