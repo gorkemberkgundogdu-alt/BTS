@@ -91,15 +91,54 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     })
     
-    const deviceId = searchParams.get('id')?.trim()
-    const lat = searchParams.get('lat')?.trim()
-    const lon = searchParams.get('lon')?.trim()
-    const timestamp = searchParams.get('timestamp')?.trim()
-    const speed = searchParams.get('speed')?.trim()
-    const bearing = searchParams.get('bearing')?.trim()
-    const altitude = searchParams.get('altitude')?.trim()
-    const accuracy = searchParams.get('accuracy')?.trim()
-    const battery = searchParams.get('battery')?.trim() || searchParams.get('batt')?.trim()
+    // Try to get data from query params OR form data (Traccar compatibility)
+    let deviceId = searchParams.get('id')?.trim()
+    let lat = searchParams.get('lat')?.trim()
+    let lon = searchParams.get('lon')?.trim()
+    let timestamp = searchParams.get('timestamp')?.trim()
+    let speed = searchParams.get('speed')?.trim()
+    let bearing = searchParams.get('bearing')?.trim()
+    let altitude = searchParams.get('altitude')?.trim()
+    let accuracy = searchParams.get('accuracy')?.trim()
+    let battery = searchParams.get('battery')?.trim() || searchParams.get('batt')?.trim()
+
+    // If not in query params, try form data (Traccar Client sends POST form data)
+    if (!deviceId || !lat || !lon) {
+      try {
+        const formData = await request.formData()
+        console.log('📦 Trying form data:', Object.fromEntries(formData.entries()))
+        
+        deviceId = deviceId || formData.get('id')?.toString().trim()
+        lat = lat || formData.get('lat')?.toString().trim()
+        lon = lon || formData.get('lon')?.toString().trim()
+        timestamp = timestamp || formData.get('timestamp')?.toString().trim()
+        speed = speed || formData.get('speed')?.toString().trim()
+        bearing = bearing || formData.get('bearing')?.toString().trim() || formData.get('course')?.toString().trim()
+        altitude = altitude || formData.get('altitude')?.toString().trim()
+        accuracy = accuracy || formData.get('accuracy')?.toString().trim() || formData.get('hdop')?.toString().trim()
+        battery = battery || formData.get('battery')?.toString().trim() || formData.get('batt')?.toString().trim()
+      } catch (e) {
+        console.log('⚠️ Not form data, trying JSON...')
+        try {
+          const body = await request.json()
+          console.log('📦 Trying JSON body:', body)
+          
+          deviceId = deviceId || body.id?.toString().trim()
+          lat = lat || body.lat?.toString().trim()
+          lon = lon || body.lon?.toString().trim()
+          timestamp = timestamp || body.timestamp?.toString().trim()
+          speed = speed || body.speed?.toString().trim()
+          bearing = bearing || body.bearing?.toString().trim() || body.course?.toString().trim()
+          altitude = altitude || body.altitude?.toString().trim()
+          accuracy = accuracy || body.accuracy?.toString().trim() || body.hdop?.toString().trim()
+          battery = battery || body.battery?.toString().trim() || body.batt?.toString().trim()
+        } catch (jsonError) {
+          console.log('⚠️ Not JSON either')
+        }
+      }
+    }
+
+    console.log('📊 Parsed data:', { deviceId, lat, lon, timestamp })
 
     // Validation
     if (!deviceId || !lat || !lon || !timestamp) {
