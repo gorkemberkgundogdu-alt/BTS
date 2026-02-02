@@ -527,7 +527,7 @@ ren Belediyesi', 'cankiri-bayramoren', 'Cankiri', 'Bayramoren', true),
   ('Sariveliler Belediyesi', 'karaman-sariveliler', 'Karaman', 'Sariveliler', true),
 
   -- Kars (8 districts)
-  ('Akyaka Belediyesi', 'kars-akyaka', 'Kars', 'Akyaka', 'true),
+  ('Akyaka Belediyesi', 'kars-akyaka', 'Kars', 'Akyaka', true),
   ('Arpacay Belediyesi', 'kars-arpacay', 'Kars', 'Arpacay', true),
   ('Digor Belediyesi', 'kars-digor', 'Kars', 'Digor', true),
   ('Kagizman Belediyesi', 'kars-kagizman', 'Kars', 'Kagizman', true),
