@@ -30,7 +30,8 @@ export async function middleware(request: NextRequest) {
   )
 
   // Auth gerektiren route'larda session yoksa login'e yönlendir
-  if (!hasSbToken && !PUBLIC_ROUTES.includes(pathname)) {
+  // Login loop'u önlemek için pathname'in kendisinin login olup olmadığını kontrol et
+  if (!hasSbToken && !PUBLIC_ROUTES.some(route => pathname.startsWith(route)) && pathname !== '/login') {
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
