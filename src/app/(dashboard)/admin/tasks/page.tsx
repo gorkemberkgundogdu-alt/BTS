@@ -30,31 +30,49 @@ export default function TasksPage() {
 
   const loadRecentTasks = async () => {
     try {
-      const { data, error } = await supabase
+      // Önce tasks'ları çek
+      const { data: tasksData, error: tasksError } = await supabase
         .from('tasks')
-        .select(`
-          id,
-          title,
-          description,
-          status,
-          priority,
-          location,
-          created_at,
-          assigned_to,
-          profiles!tasks_assigned_to_fkey (
-            full_name
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(10)
 
-      if (error) {
-        console.error('Görevler yüklenirken hata:', error)
+      if (tasksError) {
+        console.error('Görevler yüklenirken hata:', tasksError)
         setRecentTasks([])
-      } else if (data) {
-        console.log('Görevler yüklendi:', data)
-        setRecentTasks(data as Task[])
+        setLoading(false)
+        return
       }
+
+      if (!tasksData || tasksData.length === 0) {
+        console.log('Hiç görev yok')
+        setRecentTasks([])
+        setLoading(false)
+        return
+      }
+
+      // Sonra her görev için profile bilgisini çek
+      const tasksWithProfiles = await Promise.all(
+        tasksData.map(async (task) => {
+          if (!task.assigned_to) {
+            return { ...task, profiles: null }
+          }
+
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', task.assigned_to)
+            .single()
+
+          return {
+            ...task,
+            profiles: profileData
+          }
+        })
+      )
+
+      console.log('Görevler başarıyla yüklendi:', tasksWithProfiles)
+      setRecentTasks(tasksWithProfiles as Task[])
     } catch (err) {
       console.error('Beklenmeyen hata:', err)
       setRecentTasks([])
