@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Header } from '@/components/dashboard/header'
 import { StatsCard } from '@/components/dashboard/stats-card'
-import { ClipboardList, CheckCircle, Clock, Award, Smartphone, MapPin, Download, Settings, Navigation } from 'lucide-react'
+import { ClipboardList, CheckCircle, Clock, Award, MapPin, Navigation } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -229,7 +229,7 @@ export default function WorkerDashboardPage() {
         />
       </div>
 
-      {/* GPS Setup Instructions */}
+      {/* GPS Tracking Guide - Simplified */}
       <Card className="border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-blue-600/5">
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -237,83 +237,34 @@ export default function WorkerDashboardPage() {
               <MapPin className="h-6 w-6 text-blue-500" />
             </div>
             <div>
-              <CardTitle className="text-xl">GPS Konum Takibi</CardTitle>
-              <CardDescription>Mobil cihazınız üzerinden konumunuzu paylaşın</CardDescription>
+              <CardTitle className="text-xl">GPS Konum Takibi Nasil Calisir?</CardTitle>
+              <CardDescription>Gorev sirasinda konumunuz otomatik olarak paylasiliyor</CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Status Badge */}
-          <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-            <div className="flex items-center gap-3">
-              <Smartphone className="h-5 w-5 text-slate-400" />
-              <div>
-                <p className="text-sm font-medium text-white">GPS Tracking Durumu</p>
-                <p className="text-xs text-slate-400">Mobil cihaz üzerinden konum gönderimi</p>
-              </div>
-            </div>
-            <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/30">Aktif</Badge>
-          </div>
-
-          {/* Instructions */}
-          <div className="space-y-4">
+        <CardContent className="space-y-4">
+          {/* Simple Instruction */}
+          <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 font-semibold text-sm">
-                1
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-blue-400" />
               </div>
               <div className="flex-1">
-                <h4 className="text-sm font-semibold text-white mb-1">GPS Uygulamasını Yükleyin</h4>
-                <p className="text-sm text-slate-400 mb-3">Yöneticiniz tarafından sağlanan GPS tracking uygulamasını telefonunuza yükleyin (Android/iOS)</p>
-                <div className="p-3 bg-slate-900 border border-slate-700 rounded-lg">
-                  <p className="text-xs text-slate-400">
-                    <span className="text-blue-400 font-medium">Not:</span> GPS uygulama kurulum detayları için yöneticinizle iletişime geçin.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 font-semibold text-sm">
-                2
-              </div>
-              <div className="flex-1">
-                <h4 className="text-sm font-semibold text-white mb-1">Uygulamayı Yapılandırın</h4>
-                <p className="text-sm text-slate-400 mb-3">GPS uygulamasında Settings menüsüne girin ve sunucu bilgilerini ayarlayın:</p>
-                <div className="space-y-2 bg-slate-900 rounded-lg p-4 border border-slate-700">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs text-slate-400">Server URL:</span>
-                    <code className="text-xs text-blue-400 bg-slate-800 px-2 py-1 rounded break-all">
-                      {typeof window !== 'undefined' ? window.location.origin : 'https://yourdomain.com'}/api/gps?id={user?.id || 'USER_ID'}
-                    </code>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2">Önerilen ayarlar: Frequency 60s, Distance 10m, Accuracy High</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 font-semibold text-sm">
-                3
-              </div>
-              <div className="flex-1">
-                <h4 className="text-sm font-semibold text-white mb-1">Takibi Başlatın</h4>
-                <p className="text-sm text-slate-400 mb-3">Uygulamada "Start" butonuna basın ve konum izni verin. Arka planda çalışmasına izin verin.</p>
-                <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <p className="text-xs text-green-400">GPS takibi aktif olduğunda konumunuz yöneticiniz tarafından görülebilir</p>
-                </div>
+                <h4 className="text-sm font-medium text-white mb-2">Gorev baslattiginizda GPS takibiniz otomatik baslar</h4>
+                <p className="text-sm text-slate-400">
+                  Yukaridaki "GPS Konum Takibi" kartinda <strong className="text-white">Baslat</strong> butonuna tiklayin. 
+                  Tarayiciniz konum izni istediginde <strong className="text-white">Izin Ver</strong> seciniz.
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Important Notes */}
-          <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <div className="flex items-start gap-2">
-              <Settings className="h-4 w-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-yellow-400">
-                <strong>Önemli:</strong> Batarya tasarrufu modunu kapatın ve uygulamanın arka planda çalışmasına izin verin. Aksi halde GPS güncellemeleri durabilir.
-              </div>
-            </div>
+          {/* Status Info */}
+          <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+            <CheckCircle className="h-4 w-4 text-green-500" />
+            <p className="text-xs text-green-400">
+              GPS aktif oldugunda konumunuz her 10 saniyede bir guncellenir ve yoneticiniz tarafindan gorulebilir
+            </p>
           </div>
         </CardContent>
       </Card>
