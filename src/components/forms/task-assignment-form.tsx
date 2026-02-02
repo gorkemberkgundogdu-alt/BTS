@@ -163,9 +163,12 @@ export function TaskAssignmentForm({ onTaskCreated }: TaskAssignmentFormProps) {
       setSuccess(true)
       reset()
 
-      // Callback'i çağır (liste yenilensin)
+      // Callback'i çağır VE manuel refresh
       if (onTaskCreated) {
+        // Callback'i hemen çağır
         onTaskCreated()
+        // Bir de 500ms sonra çağır (emin olmak için)
+        setTimeout(() => onTaskCreated(), 500)
       }
 
       // 3 saniye sonra success mesajını kaldır

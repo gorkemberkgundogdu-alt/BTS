@@ -287,7 +287,8 @@ export function LiveTrackingMap({
         map.current = null
       }
     }
-  }, [center, zoom]) // REMOVED loadPersonnelLocations dependency
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Sadece ilk mount'ta çalış, center/zoom dependency'sini kaldır
 
   // Setup realtime subscription and initial load
   useEffect(() => {
