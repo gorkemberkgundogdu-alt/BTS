@@ -29,26 +29,38 @@ export default function TasksPage() {
   const [loading, setLoading] = useState(true)
 
   const loadRecentTasks = async () => {
-    const { data, error } = await supabase
-      .from('tasks')
-      .select(`
-        id,
-        title,
-        description,
-        status,
-        priority,
-        location,
-        created_at,
-        assigned_to,
-        profiles:assigned_to (full_name)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(10)
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select(`
+          id,
+          title,
+          description,
+          status,
+          priority,
+          location,
+          created_at,
+          assigned_to,
+          profiles!tasks_assigned_to_fkey (
+            full_name
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10)
 
-    if (!error && data) {
-      setRecentTasks(data as Task[])
+      if (error) {
+        console.error('Görevler yüklenirken hata:', error)
+        setRecentTasks([])
+      } else if (data) {
+        console.log('Görevler yüklendi:', data)
+        setRecentTasks(data as Task[])
+      }
+    } catch (err) {
+      console.error('Beklenmeyen hata:', err)
+      setRecentTasks([])
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
