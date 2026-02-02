@@ -16,6 +16,8 @@ const taskSchema = z.object({
   title: z.string().min(3, 'Başlık en az 3 karakter olmalı'),
   description: z.string().optional(),
   assigned_to: z.string().min(1, 'Personel seçilmeli'),
+  priority: z.enum(['low', 'medium', 'high']).default('medium'),
+  location: z.string().optional(),
   route_id: z.string().optional(),
   scheduled_start: z.string().optional(),
 })
@@ -120,6 +122,8 @@ export function TaskAssignmentForm({ onTaskCreated }: TaskAssignmentFormProps) {
         title: data.title,
         description: data.description || null,
         assigned_to: data.assigned_to,
+        priority: data.priority || 'medium',
+        location: data.location || null,
         route_id: data.route_id || null,
         scheduled_start: data.scheduled_start || null,
         status: 'assigned',
@@ -242,6 +246,24 @@ export function TaskAssignmentForm({ onTaskCreated }: TaskAssignmentFormProps) {
               <p className="text-xs text-red-500">{errors.assigned_to.message}</p>
             )}
           </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-200">Öncelik</label>
+            <select
+              className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              {...register('priority')}
+            >
+              <option value="low">Düşük</option>
+              <option value="medium">Orta</option>
+              <option value="high">Yüksek</option>
+            </select>
+          </div>
+
+          <Input
+            label="Lokasyon (İsteğe Bağlı)"
+            placeholder="Örn: Kadıköy, Moda Caddesi"
+            {...register('location')}
+          />
 
           <Input
             label="Başlangıç Zamanı (İsteğe Bağlı)"
