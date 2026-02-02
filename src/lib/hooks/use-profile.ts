@@ -113,12 +113,11 @@ export function useProfile() {
   }
 
   // Profile completeness check
+  // Profil tamamlanma kontrolü - sadece kritik fieldlar
   const isProfileComplete = !profile ? false : !!(
     profile.full_name &&
-    profile.phone &&
-    profile.city &&
-    profile.district &&
-    profile.municipality_id
+    profile.role
+    // phone, city, district, municipality_id opsiyonel - sonradan doldurulabilir
   )
 
   return {
