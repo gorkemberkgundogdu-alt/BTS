@@ -51,9 +51,13 @@ export function useGPSTracking() {
     if (!user?.id) return
 
     try {
+      // Device ID oluştur (user_id + timestamp bazlı)
+      const deviceId = `web-${user.id.slice(0, 8)}-${Date.now()}`
+      
       const { error: insertError } = await supabase
         .from('gps_locations')
         .insert([{
+          device_id: deviceId,
           user_id: user.id,
           latitude: location.latitude,
           longitude: location.longitude,
@@ -65,6 +69,8 @@ export function useGPSTracking() {
 
       if (insertError) {
         console.error('GPS veri gönderme hatası:', insertError)
+      } else {
+        console.log('✅ GPS verisi başarıyla gönderildi')
       }
     } catch (err) {
       console.error('GPS veri gönderme hatası:', err)

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { 
   LayoutDashboard, 
   Route, 
@@ -46,6 +46,7 @@ const workerNavItems: NavItem[] = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const { sidebarOpen, setSidebarOpen } = useUIStore()
   const { profile, logout } = useAuth()
 
@@ -54,6 +55,7 @@ export function Sidebar() {
   const handleLogout = async () => {
     try {
       await logout()
+      router.push('/login')
     } catch (error) {
       console.error('Logout error:', error)
     }
