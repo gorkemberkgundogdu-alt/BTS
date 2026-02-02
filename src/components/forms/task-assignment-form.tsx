@@ -28,7 +28,11 @@ interface Personnel {
   department?: string
 }
 
-export function TaskAssignmentForm() {
+interface TaskAssignmentFormProps {
+  onTaskCreated?: () => void
+}
+
+export function TaskAssignmentForm({ onTaskCreated }: TaskAssignmentFormProps) {
   const supabase = createClient()
   const { user } = useAuth()
   const [personnel, setPersonnel] = useState<Personnel[]>([])
@@ -158,6 +162,11 @@ export function TaskAssignmentForm() {
 
       setSuccess(true)
       reset()
+
+      // Callback'i çağır (liste yenilensin)
+      if (onTaskCreated) {
+        onTaskCreated()
+      }
 
       // 3 saniye sonra success mesajını kaldır
       setTimeout(() => setSuccess(false), 3000)

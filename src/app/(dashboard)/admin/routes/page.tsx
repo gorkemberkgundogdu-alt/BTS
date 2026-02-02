@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { LiveTrackingMap } from '@/components/maps/live-tracking-map'
+import { RouteCreationForm } from '@/components/forms/route-creation-form'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils/cn'
 import { Plus, MapPin, Users, Battery, Gauge, Clock } from 'lucide-react'
@@ -30,6 +31,7 @@ export default function RoutesPage() {
   const [personnel, setPersonnel] = useState<PersonnelInfo[]>([])
   const [showSidebar, setShowSidebar] = useState(true)
   const [filter, setFilter] = useState<'all' | 'active' | 'inactive'>('all')
+  const [isRouteFormOpen, setIsRouteFormOpen] = useState(false)
 
   // Load personnel with their latest locations
   useEffect(() => {
@@ -333,6 +335,7 @@ export default function RoutesPage() {
 
               <Button 
                 className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20"
+                onClick={() => setIsRouteFormOpen(true)}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Yeni Rota Oluştur
@@ -354,6 +357,16 @@ export default function RoutesPage() {
           />
         </div>
       </div>
+
+      {/* Route Creation Form */}
+      <RouteCreationForm 
+        isOpen={isRouteFormOpen}
+        onClose={() => setIsRouteFormOpen(false)}
+        onRouteCreated={() => {
+          // Refresh personnel list or show success message
+          loadPersonnel()
+        }}
+      />
     </div>
   )
 }

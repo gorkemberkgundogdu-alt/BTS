@@ -214,6 +214,8 @@ export default function AdminDashboardPage() {
         <CardContent>
           <LiveTrackingMap 
             className="w-full h-[600px]" 
+            center={[29.0, 41.0]}
+            zoom={11}
             showTrails={true}
             onPersonnelClick={(userId) => {
               window.location.href = `/admin/personnel/${userId}`

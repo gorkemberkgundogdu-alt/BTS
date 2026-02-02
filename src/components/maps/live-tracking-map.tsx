@@ -251,7 +251,8 @@ export function LiveTrackingMap({
               'raster-brightness-min': 0.0,
               'raster-brightness-max': 1.0,
               'raster-contrast': 0.1,
-              'raster-saturation': 0.0
+              'raster-saturation': 0.0,
+              'raster-fade-duration': 0
             }
           }
         ]
@@ -261,7 +262,9 @@ export function LiveTrackingMap({
       maxZoom: 19,
       minZoom: 5,
       pitch: 0,
-      bearing: 0
+      bearing: 0,
+      fadeDuration: 0,
+      renderWorldCopies: false
     })
 
     // Add navigation controls

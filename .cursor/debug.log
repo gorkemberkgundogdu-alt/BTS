@@ -199,3 +199,11 @@
 {"location":"live-tracking-map.tsx:274","message":"Map init useEffect triggered","data":{"hasContainer":true,"hasMap":false,"isLoaded":true},"timestamp":1769989730142,"sessionId":"debug-session","hypothesisId":"A,C"}
 {"location":"live-tracking-map.tsx:278","message":"Creating new map instance","data":{"center":[35.2433,38.9637],"zoom":12},"timestamp":1769989730142,"sessionId":"debug-session","hypothesisId":"A,C"}
 {"location":"live-tracking-map.tsx:328","message":"Map loaded event fired","data":{},"timestamp":1769989730220,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"login/page.tsx:52","message":"BEFORE profile fetch","data":{"userId":"4994cfc4-7e9e-4743-bee9-aaba425f43f4"},"timestamp":1769990108819,"sessionId":"debug-session","hypothesisId":"C"}
+{"location":"login/page.tsx:30","message":"onSubmit STARTED","data":{"email":"mr.gndd7@gmail.com"},"timestamp":1769990108282,"sessionId":"debug-session","hypothesisId":"A"}
+{"location":"login/page.tsx:38","message":"BEFORE login() call","data":{},"timestamp":1769990108282,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"login/page.tsx:63","message":"AFTER profile fetch","data":{"hasProfile":true,"role":"admin","hasError":false},"timestamp":1769990109252,"sessionId":"debug-session","hypothesisId":"C"}
+{"location":"login/page.tsx:75","message":"BEFORE redirect","data":{"redirect":null,"role":"admin"},"timestamp":1769990109252,"sessionId":"debug-session","hypothesisId":"D"}
+{"location":"login/page.tsx:45","message":"AFTER login() call","data":{"hasUser":true,"userId":"4994cfc4-7e9e-4743-bee9-aaba425f43f4"},"timestamp":1769990108818,"sessionId":"debug-session","hypothesisId":"B"}
+{"location":"login/page.tsx:91","message":"AFTER router.push, BEFORE refresh","data":{},"timestamp":1769990109253,"sessionId":"debug-session","hypothesisId":"D"}
+{"location":"login/page.tsx:98","message":"onSubmit COMPLETED","data":{},"timestamp":1769990109253,"sessionId":"debug-session","hypothesisId":"A"}
