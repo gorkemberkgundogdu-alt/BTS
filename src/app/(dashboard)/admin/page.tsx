@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react'
 import { Header } from '@/components/dashboard/header'
 import { StatsCard } from '@/components/dashboard/stats-card'
-import { ClipboardList, Users, Route, CheckCircle, MapPin } from 'lucide-react'
+import { ClipboardList, Users, Route, CheckCircle, MapPin, X, Phone, Mail, MapPinIcon } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { LiveTrackingMap } from '@/components/maps/live-tracking-map'
@@ -37,6 +38,7 @@ export default function AdminDashboardPage() {
   })
   const [recentTasks, setRecentTasks] = useState<RecentTask[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedPersonnel, setSelectedPersonnel] = useState<any>(null)
 
   useEffect(() => {
     if (!user) return
@@ -218,12 +220,87 @@ export default function AdminDashboardPage() {
             center={[29.0, 41.0]}
             zoom={11}
             showTrails={true}
-            onPersonnelClick={(userId) => {
-              window.location.href = `/admin/personnel/${userId}`
+            onPersonnelClick={async (userId) => {
+              // Personel bilgilerini fetch et
+              const supabase = createClient()
+              const { data } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single()
+              
+              if (data) {
+                setSelectedPersonnel(data)
+              }
             }}
           />
         </CardContent>
       </Card>
+
+      {/* Personnel Detail Popup */}
+      {selectedPersonnel && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedPersonnel(null)}>
+          <div className="bg-slate-800 rounded-lg p-6 w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-white">Personel Detayı</h3>
+              <button onClick={() => setSelectedPersonnel(null)} className="text-slate-400 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+                  {selectedPersonnel.full_name?.charAt(0) || 'P'}
+                </div>
+                <div>
+                  <p className="font-medium text-white">{selectedPersonnel.full_name}</p>
+                  <p className="text-sm text-slate-400">{selectedPersonnel.role === 'personnel' ? 'Personel' : 'Yönetici'}</p>
+                </div>
+              </div>
+
+              {selectedPersonnel.phone && (
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Phone className="h-4 w-4" />
+                  <span>{selectedPersonnel.phone}</span>
+                </div>
+              )}
+
+              {selectedPersonnel.email && (
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Mail className="h-4 w-4" />
+                  <span>{selectedPersonnel.email}</span>
+                </div>
+              )}
+
+              {selectedPersonnel.department && (
+                <div className="text-slate-300">
+                  <span className="text-slate-400">Departman:</span> {selectedPersonnel.department}
+                </div>
+              )}
+
+              {selectedPersonnel.employee_id && (
+                <div className="text-slate-300">
+                  <span className="text-slate-400">Sicil No:</span> {selectedPersonnel.employee_id}
+                </div>
+              )}
+
+              <div className="pt-4 flex gap-2">
+                <Button 
+                  className="flex-1" 
+                  onClick={() => {
+                    setSelectedPersonnel(null)
+                    window.location.href = `/admin/personnel/${selectedPersonnel.id}`
+                  }}
+                >
+                  <MapPinIcon className="h-4 w-4 mr-2" />
+                  Detaylı Görüntüle
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Activity */}
       <div className="grid gap-4 md:grid-cols-2">

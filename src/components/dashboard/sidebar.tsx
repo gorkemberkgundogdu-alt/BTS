@@ -57,7 +57,9 @@ export function Sidebar() {
       console.log('🚪 Logout başlatılıyor...')
       await logout()
       console.log('✅ Logout başarılı, login sayfasına yönlendiriliyor...')
-      router.push('/login')
+      
+      // Hard reload ile login'e git (cache'i temizlemek için)
+      window.location.href = '/login'
     } catch (error) {
       console.error('❌ Logout error:', error)
     }
