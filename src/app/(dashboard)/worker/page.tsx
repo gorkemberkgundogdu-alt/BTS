@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Header } from '@/components/dashboard/header'
 import { StatsCard } from '@/components/dashboard/stats-card'
-import { GPSTrackingWidget } from '@/components/dashboard/gps-tracking-widget'
-import { ClipboardList, CheckCircle, Clock, Award } from 'lucide-react'
+import { ClipboardList, CheckCircle, Clock, Award, Smartphone, MapPin, Download, Settings } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -175,8 +174,120 @@ export default function WorkerDashboardPage() {
         />
       </div>
 
-      {/* GPS Tracking Widget */}
-      <GPSTrackingWidget />
+      {/* Traccar GPS Setup Instructions */}
+      <Card className="border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-blue-600/5">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-blue-500/10 rounded-lg">
+              <MapPin className="h-6 w-6 text-blue-500" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">GPS Konum Takibi</CardTitle>
+              <CardDescription>Traccar Client ile konumunuzu paylaşın</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Status Badge */}
+          <div className="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+            <div className="flex items-center gap-3">
+              <Smartphone className="h-5 w-5 text-slate-400" />
+              <div>
+                <p className="text-sm font-medium text-white">Traccar Client Durumu</p>
+                <p className="text-xs text-slate-400">Mobil uygulama üzerinden GPS gönderimi</p>
+              </div>
+            </div>
+            <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/30">Aktif</Badge>
+          </div>
+
+          {/* Instructions */}
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 font-semibold text-sm">
+                1
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-semibold text-white mb-1">Traccar Client'ı İndirin</h4>
+                <p className="text-sm text-slate-400 mb-3">Telefonunuza uygun uygulamayı yükleyin</p>
+                <div className="flex flex-wrap gap-2">
+                  <a 
+                    href="https://play.google.com/store/apps/details?id=org.traccar.client" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 text-sm text-white transition-colors"
+                  >
+                    <Download className="h-4 w-4" />
+                    Android (Google Play)
+                  </a>
+                  <a 
+                    href="https://apps.apple.com/app/traccar-client/id843156974" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 text-sm text-white transition-colors"
+                  >
+                    <Download className="h-4 w-4" />
+                    iOS (App Store)
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 font-semibold text-sm">
+                2
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-semibold text-white mb-1">Sunucu Ayarlarını Yapın</h4>
+                <p className="text-sm text-slate-400 mb-3">Traccar Client'ta Settings menüsüne girin ve aşağıdaki ayarları girin:</p>
+                <div className="space-y-2 bg-slate-900 rounded-lg p-4 border border-slate-700">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400">Server URL:</span>
+                    <code className="text-xs text-blue-400 bg-slate-800 px-2 py-1 rounded">
+                      {typeof window !== 'undefined' ? window.location.origin : 'https://yourdomain.com'}/api/gps?id={user?.id || 'USER_ID'}
+                    </code>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400">Frequency:</span>
+                    <code className="text-xs text-green-400">60 seconds</code>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400">Distance:</span>
+                    <code className="text-xs text-green-400">10 meters</code>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400">Accuracy:</span>
+                    <code className="text-xs text-green-400">High</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 font-semibold text-sm">
+                3
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-semibold text-white mb-1">Takibi Başlatın</h4>
+                <p className="text-sm text-slate-400 mb-3">Uygulamada "Start" butonuna basın ve konum izni verin. Arka planda çalışmasına izin verin.</p>
+                <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <p className="text-xs text-green-400">GPS takibi aktif olduğunda konumunuz yöneticiniz tarafından görülebilir</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Important Notes */}
+          <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <div className="flex items-start gap-2">
+              <Settings className="h-4 w-4 text-yellow-500 flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-yellow-400">
+                <strong>Önemli:</strong> Batarya tasarrufu modunu kapatın ve uygulamanın arka planda çalışmasına izin verin. Aksi halde GPS güncellemeleri durabilir.
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Today's Tasks */}
       <Card>
