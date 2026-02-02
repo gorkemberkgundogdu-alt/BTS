@@ -119,6 +119,14 @@ export function useProfile() {
     profile.role
     // municipality_id opsiyonel - sonradan ayarlanabilir
   )
+  
+  // Debug log
+  console.log('✅ Profile Complete Check:', {
+    hasProfile: !!profile,
+    full_name: profile?.full_name,
+    role: profile?.role,
+    isComplete: isProfileComplete
+  })
 
   return {
     profile,
