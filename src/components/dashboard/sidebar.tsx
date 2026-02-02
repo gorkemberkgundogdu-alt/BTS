@@ -54,10 +54,12 @@ export function Sidebar() {
 
   const handleLogout = async () => {
     try {
+      console.log('🚪 Logout başlatılıyor...')
       await logout()
+      console.log('✅ Logout başarılı, login sayfasına yönlendiriliyor...')
       router.push('/login')
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error('❌ Logout error:', error)
     }
   }
 

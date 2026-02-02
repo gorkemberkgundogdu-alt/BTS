@@ -158,12 +158,17 @@ export function useAuth() {
   }
 
   const logout = async () => {
+    console.log('🔐 Supabase signOut başlatılıyor...')
     const { error } = await supabase.auth.signOut()
     
-    if (error) throw error
+    if (error) {
+      console.error('❌ SignOut hatası:', error)
+      throw error
+    }
 
+    console.log('✅ Supabase signOut başarılı')
     reset()
-    router.push('/login')
+    // Router push'u sidebar'da yapıyoruz, burada yapmaya gerek yok
   }
 
   return {
