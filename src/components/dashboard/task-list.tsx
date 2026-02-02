@@ -3,11 +3,10 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/hooks/use-auth'
-import { useGPSTracking } from '@/lib/hooks/use-gps-tracking'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { AlertCircle, CheckCircle2, Clock, MapPin, Play } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Clock, Play, Info } from 'lucide-react'
 
 interface Task {
   id: string
@@ -23,7 +22,6 @@ interface Task {
 export function TaskList() {
   const supabase = createClient()
   const { user } = useAuth()
-  const { startTracking, isTracking } = useGPSTracking()
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [startingTask, setStartingTask] = useState<string | null>(null)
@@ -80,24 +78,16 @@ export function TaskList() {
     }
   }, [user, supabase])
 
-  // Görevi başlat (GPS tracking ile birlikte)
+  // Görevi başlat (Traccar GPS zaten çalışıyor olmalı)
   const handleStartTask = async (taskId: string) => {
     console.log('🚀 Görev başlatma başladı, Task ID:', taskId)
     setStartingTask(taskId)
 
     try {
-      console.log('📍 GPS tracking başlatılıyor...')
-      // 1. GPS tracking'i başlat
-      const trackingStarted = await startTracking()
-      console.log('📍 GPS tracking sonucu:', trackingStarted)
+      // Traccar Client'ın çalıştığını varsayıyoruz
+      // GPS izni kontrolü veya başlatma yok - Traccar bağımsız çalışıyor
       
-      // Eğer tracking başlatılamadıysa hata göster
-      if (!trackingStarted) {
-        throw new Error('GPS izni alınamadı')
-      }
-
       console.log('💾 Görev durumu güncelleniyor...')
-      // 2. Görevi başlat
       const { data, error } = await supabase
         .from('tasks')
         .update({ 
@@ -113,10 +103,10 @@ export function TaskList() {
       if (error) throw error
 
       console.log('✅ Görev başarıyla başlatıldı!')
-      alert('Görev başlatıldı! GPS takibi aktif.')
+      alert('Görev başlatıldı! GPS takibi Traccar Client ile yapılıyor.')
     } catch (err) {
       console.error('❌ Görev başlatma hatası:', err)
-      alert('Görev başlatılamadı. GPS izni verildiğinden emin olun ve tekrar deneyin.')
+      alert('Görev başlatılamadı. Lütfen tekrar deneyin.')
     } finally {
       setStartingTask(null)
     }
@@ -183,6 +173,22 @@ export function TaskList() {
 
   return (
     <div className="space-y-4">
+      {/* Traccar GPS Uyarısı */}
+      <Card className="border-blue-500/20 bg-blue-500/5">
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm text-blue-400 font-medium">GPS Takibi Traccar Client İle Yapılmaktadır</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Görevi başlatmadan önce Traccar Client uygulamasını telefonunuzda başlattığınızdan emin olun. 
+                Ana Sayfa'daki kurulum talimatlarını takip edin.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {tasks.map((task) => (
         <Card key={task.id}>
           <CardHeader>
@@ -234,27 +240,19 @@ export function TaskList() {
                 </Button>
               )}
               {task.status === 'in_progress' && (
-                <>
-                  <Button
-                    onClick={() => handleCompleteTask(task.id)}
-                    className="flex-1"
-                  >
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                    Tamamla
-                  </Button>
-                  {isTracking && (
-                    <Badge variant="success" className="self-center">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      GPS Aktif
-                    </Badge>
-                  )}
-                </>
+                <Button
+                  onClick={() => handleCompleteTask(task.id)}
+                  className="flex-1"
+                >
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                  Tamamla
+                </Button>
               )}
             </div>
 
             {task.status === 'assigned' && (
               <p className="text-xs text-slate-400">
-                ℹ️ Görevi başlattığınızda GPS takibi otomatik olarak başlayacak
+                ℹ️ Traccar Client'ı çalıştırdıktan sonra görevi başlatın
               </p>
             )}
           </CardContent>
