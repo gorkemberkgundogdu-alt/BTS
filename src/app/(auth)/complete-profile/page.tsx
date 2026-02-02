@@ -67,13 +67,13 @@ export default function CompleteProfilePage() {
           .order('name')
 
         if (error) {
-          console.error('❌ Belediye yükleme hatası:', error)
+          console.error('Belediye yukleme hatasi:', error)
           setMunicipalities([])
         } else if (data) {
-          console.log(`✅ ${selectedCity} için ${data.length} belediye yüklendi:`, data.slice(0, 3).map(m => m.name))
+          console.log(`${selectedCity} icin ${data.length} belediye yuklendi`)
           setMunicipalities(data)
         } else {
-          console.log(`⚠️ ${selectedCity} için belediye bulunamadı`)
+          console.log(`${selectedCity} icin belediye bulunamadi`)
           setMunicipalities([])
         }
       } catch (err) {
@@ -92,7 +92,7 @@ export default function CompleteProfilePage() {
       setError(null)
       await completeProfile(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Profil güncellenirken hata oluştu')
+      setError(err instanceof Error ? err.message : 'Profil guncellenirken hata olustu')
     }
   }
 
@@ -105,9 +105,9 @@ export default function CompleteProfilePage() {
       <div className="flex min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-center">Oturum Bulunamadı</CardTitle>
+            <CardTitle className="text-center">Oturum Bulunamadi</CardTitle>
             <CardDescription className="text-center">
-              Lütfen giriş yapın
+              Lutfen giris yapin
             </CardDescription>
           </CardHeader>
         </Card>
@@ -124,7 +124,7 @@ export default function CompleteProfilePage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl">Profili Tamamla</CardTitle>
           <CardDescription className="text-center">
-            Devam etmek için lütfen profil bilgilerinizi tamamlayın
+            Devam etmek icin lutfen profil bilgilerinizi tamamlayin
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -154,9 +154,9 @@ export default function CompleteProfilePage() {
             </div>
 
             <Select
-              label="İl *"
+              label="Il *"
               options={[
-                { value: '', label: 'İl seçiniz' },
+                { value: '', label: 'Il seciniz' },
                 ...cities.map(city => ({ value: city, label: city })),
               ]}
               error={errors.city?.message}
@@ -169,14 +169,14 @@ export default function CompleteProfilePage() {
                 { 
                   value: '', 
                   label: loadingMunicipalities 
-                    ? 'Yükleniyor...' 
+                    ? 'Yukleniyor...' 
                     : !selectedCity 
-                      ? 'Önce il seçiniz' 
+                      ? 'Once il seciniz' 
                       : municipalities.length === 0
-                        ? 'Bu ilde belediye bulunamadı'
-                        : 'Belediye seçiniz' 
+                        ? 'Bu ilde belediye bulunamadi'
+                        : 'Belediye seciniz' 
                 },
-                ...municipalities.map(m => ({ value: m.id, label: m.name })),
+                ...municipalities.map(m => ({ value: m.id, label: `${m.name} (${m.district})` })),
               ]}
               error={errors.municipality_id?.message}
               disabled={!selectedCity || loadingMunicipalities}
